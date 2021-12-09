@@ -41,14 +41,10 @@ def comparison(meth):
 class NodeSet(list):
 
     def union(self: "NodeSet", ns: "NodeSet") -> "NodeSet":
-        paths = set([n.path for n in self])
-        return self.__class__(self + [n for n in ns if n.path not in paths])
+        return self.__class__({n.path: n for n in self + ns}.values())
 
     def bind(self: "NodeSet", trans: NodeExpr) -> "NodeSet":
-        res = self.__class__([])
-        for n in self:
-            res = res.union(trans(n))
-        return res
+        return self.__class__({i.path: i for n in self for i in trans(n)}.values())
 
     def __float__(self: "NodeSet") -> float:
         return float(self[0].value)
